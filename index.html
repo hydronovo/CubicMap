@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CubicMap</title>
+  <meta name="description" content="在地图上框选黄金比例区域，生成路网线稿并导出 3D 打印模型。">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Cubic<span>Map</span></div>
+    <form id="search" class="search">
+      <input id="search-input" type="search" placeholder="搜索城市 / 地点，例如：上海外滩" autocomplete="off">
+      <button type="submit">搜索</button>
+    </form>
+  </header>
+
+  <main class="layout">
+    <section class="map-wrap">
+      <div id="map"></div>
+      <div id="frame" class="frame"><span id="frame-info" class="frame-info"></span></div>
+      <div class="map-tools">
+        <div class="seg" role="group" aria-label="方向">
+          <button type="button" data-orient="landscape" class="active">横向</button>
+          <button type="button" data-orient="portrait">纵向</button>
+        </div>
+        <label class="range">选框大小
+          <input id="frame-scale" type="range" min="30" max="92" value="70">
+        </label>
+        <button id="btn-generate" class="primary" type="button">生成</button>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <p class="hint">拖动 / 缩放地图，把要的区域放进黄金比例（1 : 1.618）选框里，然后点 <b>生成</b>。</p>
+      <div id="status" class="status" hidden></div>
+
+      <section id="sec-2d" class="card" hidden>
+        <h2>二维路网</h2>
+        <div id="preview" class="preview"></div>
+        <p id="stats" class="stats"></p>
+        <div class="grid">
+          <label>道路密度
+            <select id="density">
+              <option value="auto" selected>自动</option>
+            </select>
+          </label>
+          <label>线宽
+            <input id="line-mul" type="range" min="50" max="200" value="100">
+          </label>
+          <label>边框颜色 <input id="border-color" type="color" value="#000000"></label>
+          <label>边框宽度 (mm)
+            <input id="border-width" type="number" min="0.5" max="8" step="0.5" value="2">
+          </label>
+          <label>道路颜色 <input id="road-color" type="color" value="#000000"></label>
+          <label>背景颜色 <input id="bg-color" type="color" value="#ffffff"></label>
+        </div>
+        <div class="row">
+          <button id="dl-svg" type="button">下载 SVG</button>
+          <button id="dl-png" type="button">下载 PNG</button>
+          <button id="btn-3d" class="primary" type="button">Create 3D</button>
+        </div>
+      </section>
+
+      <section id="sec-3d" class="card" hidden>
+        <h2>三维模型</h2>
+        <div id="view3d" class="view3d"></div>
+        <div class="grid">
+          <label>宽度 (mm) <input id="w3d" type="number" min="20" max="400" step="1" value="100"></label>
+          <label>总厚度 (mm) <input id="thick" type="number" min="1" max="30" step="0.5" value="5"></label>
+          <label>底板厚度 (mm) <input id="base" type="number" min="0" max="29" step="0.5" value="2"></label>
+          <label>最细线宽 (mm) <input id="min-line" type="number" min="0.2" max="3" step="0.1" value="0.6"></label>
+        </div>
+        <p id="stats3d" class="stats"></p>
+        <div class="row">
+          <button id="btn-rebuild" type="button">更新模型</button>
+          <button id="dl-stl" class="primary" type="button">下载 STL</button>
+        </div>
+      </section>
+    </aside>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
